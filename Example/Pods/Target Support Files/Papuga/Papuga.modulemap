@@ -1,0 +1,6 @@
+framework module Papuga {
+  umbrella header "Papuga-umbrella.h"
+
+  export *
+  module * { export * }
+}

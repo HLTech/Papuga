@@ -1,0 +1,11 @@
+sources:
+    include:
+        - ./iOSExample/Source
+        - ./iOSExampleTests
+templates:
+    - ../Templates
+output:
+    path: ./iOSExampleTests/Generated
+args:
+    testable:
+        - iOSExample

@@ -1,0 +1,242 @@
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable file_length
+// swiftlint:disable identifier_name
+// swiftlint:disable nesting
+{#
+    Created by Kamil Wyszomierski on 25/10/2018.
+    Copyright © 2018 HL Tech. All rights reserved.
+
+    This template is written in Stencil. For more info please visit: http://stencil.fuller.li/en/latest/
+#}
+
+import UIKit
+{#
+    Adds libraries `@testable import` specified under `testable` argument in `args` inside .yml config.
+#}
+import Papuga
+{% for aTestable in argument.testable %}
+@testable import {{ aTestable }}
+{% endfor %}
+{#
+    Parameters.
+#}
+{% macro methodParameterName parameter %}{% if parameter.argumentLabel != parameter.name %}{% if parameter.argumentLabel %}{{ parameter.argumentLabel }}{% else %}_{% endif %} {% endif %}{{ parameter.name }}{% endmacro %}
+{% macro methodParameter parameter %}{% call methodParameterName parameter %}: {{ parameter.typeName }}{% endmacro %}
+{% macro methodParameterStub parameter %}{% call methodParameterName parameter %}: Parameter<{% call noEscapeParameterTypeName parameter %}>{% endmacro %}
+{% macro methodConvertedParametersArray method %}[{% for aParameter in method.parameters %}{{ aParameter.name }}.converted(){% if not forloop.last %}, {% endif %}{% endfor %}]{% endmacro %}
+{% macro noEscapeParameterTypeName parameter %}{{ parameter.typeName | replace:"@escaping ","" }}{% endmacro %}
+{#
+    Properties.
+#}
+{% macro propertyGetterBody property %}
+
+{% endmacro %}
+{#
+    Methods.
+#}
+{% macro humanReadableReturnTypeName method %}{% if not method.returnTypeName.isVoid %}Returns{% call humanReadableTypeName method.returnTypeName %}{% endif %}{% endmacro%}
+{% macro methodGenericStub method %}{{ method.shortName }}({% for aParameter in method.parameters %}{% call methodParameterStub aParameter %}{% if not forloop.last %}, {% endif %}{% endfor %}){% endmacro %}
+{% macro methodReturnTypeName method %}{% if not method.returnTypeName.isVoid %} -> {{ method.returnTypeName }}{% endif %}{% endmacro%}
+{% macro methodSignature method %}{{ method.name }}{% call methodReturnTypeName method %}{% endmacro %}
+{% macro methodStub method %}{{ method.shortName }}({% for aParameter in method.parameters %}{% call methodParameterStub aParameter %}{% if not forloop.last or not method.returnTypeName.isVoid %}, {% endif %}{% endfor %}{% if not method.returnTypeName.isVoid %}returns type: {{ method.returnTypeName }}.Type = {{ method.returnTypeName }}.self{% endif %}){% endmacro %}
+{% macro methodStubInvocation method %}{{ method.callName }}({% for aParameter in method.parameters %}{% if aParameter.argumentLabel %}{{ aParameter.argumentLabel }}: {% endif %}Parameter<{% call noEscapeParameterTypeName aParameter %}>.value({{ aParameter.name }}){% if not forloop.last or not method.returnTypeName.isVoid %}, {% endif %}{% endfor %}{% if not method.returnTypeName.isVoid %}returns: {{ method.returnTypeName }}.self{% endif %}){% endmacro %}
+{#
+    Type name convercy.
+#}
+{% macro clearTypeName type %}{{ type | replace:"_","" | replace:"=","" | replace:">","" | replace:":","" | replace:"?","" | replace:" ","" | swiftIdentifier }}{% endmacro %}
+{% macro humanReadableTypeName type %}{% if type.isOptional %}Optional{% endif %}{% if type.isArray %}ArrayOf{% call humanReadableTypeName type.array.elementTypeName %}{% elif type.isClosure %}ClosureOf{% for aParameter in type.closure.parameters %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% call humanReadableReturnTypeName type.closure %}{% elif type.isDictionary %}DictionaryOf{% call humanReadableTypeName type.dictionary.keyTypeName %}KeyAnd{% call humanReadableTypeName type.dictionary.valueTypeName %}Value{% elif type.isGeneric %}Generic{{ type.generic.name }}Of{% for aParameter in type.generic.typeParameters %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% else %}{% call clearTypeName type %}{% endif %}{% endmacro %}
+{% macro humanReadableMethodName method %}{{ aMethod.shortName | replace:" ", "" | swiftIdentifier | lowerFirstWord }}{% for aParameter in aMethod.parameters %}{% if aParameter.argumentLabel %}{{ aParameter.argumentLabel|upperFirstLetter }}{% endif %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% endmacro %}
+{% macro humanReadableMethodNameWithReturnTypeName method %}{% call humanReadableMethodName method %}{% call humanReadableReturnTypeName method %}{% endmacro %}
+{#
+    Variables macros.
+#}
+{% macro classMockName name %}{{ name }}Mock{% endmacro %}
+{#
+    Iterating through all types for generate mock implementations.
+    Types should implement `AutoMockable` protocol or be annotated like this:
+    ```
+        // sourcery: AutoMockable
+        protocol ProtocolName {
+        }
+    ```
+#}
+{% for type in types.protocols where type.based.AutoMockable or type|annotated:"AutoMockable" %}
+
+// MARK: - {% call classMockName type.name %}
+
+class {% call classMockName type.name %}: Mock, Mockable, {{ type.name }} {
+
+    {% if type.variables.count == 0 %}
+    struct PropertySignature: Hashable, RawRepresentable {
+
+        typealias RawValue = String
+
+        let rawValue: String
+
+        init?(rawValue: String) {
+            self.rawValue = rawValue
+        }
+    {% else %}
+    enum PropertySignature: String {
+        {% for aProperty in type.variables %}
+        case {{ aProperty.name }}
+        {% endfor %}
+    {% endif %}
+    }
+
+    struct PropertyMethod: Nameable, ParameterProviding, PropertyMethodTypeProviding {
+
+        typealias Name = PropertySignature
+
+        let name: PropertySignature
+        let methodType: PropertyMethodType
+        let parameter: Parameter<Any>
+        {% for aProperty in type.variables %}
+
+        static func {{ aProperty.name }}(getter: Parameter<{{ aProperty.typeName }}>) -> PropertyMethod {
+            return PropertyMethod(name: .{{ aProperty.name }}, methodType: .get, parameter: getter.converted())
+        }
+            {% if aProperty.writeAccess %}
+
+        static func {{ aProperty.name }}(setter: Parameter<{{ aProperty.typeName }}>) -> PropertyMethod {
+            return PropertyMethod(name: .{{ aProperty.name }}, methodType: .set, parameter: setter.converted())
+        }
+            {% endif %}
+        {% endfor %}
+    }
+
+    struct Property<T>: Nameable {
+
+        typealias Name = PropertySignature
+
+        let name: PropertySignature
+        {% for aProperty in type.variables %}
+
+        static var {{ aProperty.name }}: Property<{{ aProperty.typeName }}> {
+            return Property<{{ aProperty.typeName }}>(name: .{{ aProperty.name }})
+        }
+        {% endfor %}
+    }
+
+    enum MethodSignature: String {
+    {% for aMethod in type.methods %}
+        case {% call humanReadableMethodNameWithReturnTypeName aMethod %} = "{% call methodSignature aMethod %}"
+    {% endfor %}
+    }
+
+    struct Method: Nameable, ParametersProviding {
+
+        typealias Name = MethodSignature
+
+        let name: MethodSignature
+        let parameters: [Parameter<Any>]
+    {% for aMethod in type.methods %}
+
+        static func {% call methodStub aMethod %} -> Method {
+            return Method(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %}, parameters: {% call methodConvertedParametersArray aMethod %})
+        }
+    {% endfor %}
+    }
+
+    struct ReturnMethod<T>: Nameable {
+
+        typealias Name = MethodSignature
+
+        let name: MethodSignature
+    {% for aMethod in type.methods where not aMethod.returnTypeName.isVoid and not aMethod.throws %}
+
+        static func {% call methodGenericStub aMethod %} -> ReturnMethod<{{ aMethod.returnTypeName }}> {
+            return ReturnMethod<{{ aMethod.returnTypeName }}>(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %})
+        }
+    {% endfor %}
+    }
+
+    struct RethrowableMethod<T>: Nameable {
+
+        typealias Name = MethodSignature
+
+        let name: MethodSignature
+    {% for aMethod in type.methods where aMethod.rethrows %}
+
+        static func {% call methodGenericStub aMethod %} -> RethrowableMethod<{{ aMethod.returnTypeName }}> {
+            return RethrowableMethod<{{ aMethod.returnTypeName }}>(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %})
+        }
+    {% endfor %}
+    }
+
+    struct ThrowableMethod<T>: Nameable {
+
+        typealias Name = MethodSignature
+
+        let name: MethodSignature
+    {% for aMethod in type.methods where aMethod.throws %}
+
+        static func {% call methodGenericStub aMethod %} -> ThrowableMethod<{{ aMethod.returnTypeName }}> {
+            return ThrowableMethod<{{ aMethod.returnTypeName }}>(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %})
+        }
+    {% endfor %}
+    }
+
+    {#
+        Storages
+    #}
+    var methodReturnValues: [MethodSignature: Any] = [:]
+    var registeredMethodCalls: [MethodSignature: [Method]] = [:]
+    var propertyReturnValues: [PropertySignature: Any] = [:]
+    var registeredGetPropertyCalls: [PropertySignature: [PropertyMethod]] = [:]
+    var registeredSetPropertyCalls: [PropertySignature: [PropertyMethod]] = [:]
+    {#
+        Iterate through protocol's properties.
+    #}
+    {% for aProperty in type.variables %}
+
+    var {{ aProperty.name }}: {{ aProperty.typeName }} {
+        get {
+            let signature = PropertySignature.{{ aProperty.name }}
+            let value: {{ aProperty.typeName }} = getPropertyReturnValue(for: signature)
+            let property = PropertyMethod(name: signature, methodType: .get, parameter: .value(value))
+            registerCall(for: property)
+            return value
+        }
+        {% if aProperty.writeAccess %}
+        set {
+            let property = PropertyMethod(name: .{{ aProperty.name }}, methodType: .set, parameter: .value(newValue))
+            registerCall(for: property)
+        }
+        {% endif %}
+    }
+    {% endfor %}
+
+    {#
+        Given methods.
+    #}
+    func given<ReturnValue>(value: ReturnValue, for property: Property<ReturnValue>) {
+        propertyReturnValues[property.name] = value
+    }
+
+    func given<ReturnValue>(returns value: ReturnValue, for method: ReturnMethod<ReturnValue>) {
+        methodReturnValues[method.name] = value
+    }
+
+    func given<ReturnValue>(returns value: ThrowableStub<ReturnValue>, for method: ThrowableMethod<ReturnValue>) {
+        methodReturnValues[method.name] = value
+    }
+
+    func given<ReturnValue>(returns value: RethrowableStub<ReturnValue>, for method: RethrowableMethod<ReturnValue>) {
+        methodReturnValues[method.name] = value
+    }
+    {#
+        Iterate through protocol's methods.
+    #}
+    {% for aMethod in type.methods %}
+
+    func {% call methodSignature aMethod %} {
+        let method = Method.{% call methodStubInvocation aMethod %}
+        registerCall(for: method)
+        {% if not aMethod.returnTypeName.isVoid %}
+        return getMethodReturnValue(for: method)
+        {% endif %}
+    }
+    {% endfor %}
+}
+{% endfor %}

@@ -1,0 +1,19 @@
+disabled_rules:
+  - line_length
+  - trailing_whitespace
+excluded:
+  - Carthage
+  - Pods
+
+file_length:
+  warning: 500
+force_cast: warning
+force_try: warning
+identifier_name:
+  min_length:
+    warning: 1
+type_body_length:
+  warning: 400
+type_name:
+  max_length:
+    warning: 50
