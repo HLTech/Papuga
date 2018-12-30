@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
     spec.license = { :type => 'MIT' }
     spec.homepage = 'https://github.com/HLTech/Papuga'
     spec.authors = { 'Kamil Wyszomierski' => 'kamil.wyszomierski@gmail.com' }
-    spec.summary = 'Mocking library similar to "Mockito".'
+    spec.summary = 'Mocking framework for unit tests which brings experience similar to "Mockito".'
     spec.source = { :git => 'https://github.com/HLTech/Papuga.git', :tag => spec.version }
     spec.source_files = 'Papuga/Source/**/*'
     spec.swift_version = '4.2'
