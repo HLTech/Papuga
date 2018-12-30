@@ -1,3 +1,4 @@
+![Papuga](Images/papuga.png)
 # Papuga
 
 ## Installation
