@@ -1,20 +1,21 @@
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length
-// swiftlint:disable identifier_name
-// swiftlint:disable nesting
+// 
 {#
     Created by Kamil Wyszomierski on 25/10/2018.
     Copyright © 2018 HL Tech. All rights reserved.
 
     This template is written in Stencil. For more info please visit: http://stencil.fuller.li/en/latest/
 #}
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable file_length
+// swiftlint:disable identifier_name
+// swiftlint:disable nesting
 
 import UIKit
 {#
     Adds libraries `@testable import` specified under `testable` argument in `args` inside .yml config.
 #}
 import Papuga
-{% for aTestable in argument.testable %}
+{% for aTestable in argument.testables %}
 @testable import {{ aTestable }}
 {% endfor %}
 {#
@@ -48,7 +49,7 @@ import Papuga
 {% macro humanReadableMethodName method %}{{ aMethod.shortName | replace:" ", "" | swiftIdentifier | lowerFirstWord }}{% for aParameter in aMethod.parameters %}{% if aParameter.argumentLabel %}{{ aParameter.argumentLabel|upperFirstLetter }}{% endif %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% endmacro %}
 {% macro humanReadableMethodNameWithReturnTypeName method %}{% call humanReadableMethodName method %}{% call humanReadableReturnTypeName method %}{% endmacro %}
 {#
-    Variables macros.
+    Class name.
 #}
 {% macro classMockName name %}{{ name }}Mock{% endmacro %}
 {#
