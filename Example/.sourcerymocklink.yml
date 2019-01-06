@@ -11,5 +11,7 @@ output:
         target: iOSExampleTests
         group: iOSExampleTests/Generated
 args:
-    testable:
+    imports:
+        - UIKit
+    testables:
         - iOSExample
