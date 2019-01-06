@@ -7,5 +7,7 @@ templates:
 output:
     path: ./iOSExampleTests/Generated
 args:
+    imports:
+        - UIKit
     testables:
         - iOSExample

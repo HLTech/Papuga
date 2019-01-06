@@ -10,9 +10,14 @@
 // swiftlint:disable identifier_name
 // swiftlint:disable nesting
 
-import UIKit
 {#
-    Adds libraries `@testable import` specified under `testable` argument in `args` inside .yml config.
+    Adds imports specified under `imports` argument in `args` inside .yml config.
+#}
+{% for anImport in argument.imports %}
+import {{ anImport }}
+{% endfor %}
+{#
+    Adds libraries `@testable import` specified under `testables` argument in `args` inside .yml config.
 #}
 import Papuga
 {% for aTestable in argument.testables %}
