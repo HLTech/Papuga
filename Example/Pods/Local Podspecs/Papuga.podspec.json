@@ -8,7 +8,7 @@
   "authors": {
     "Kamil Wyszomierski": "kamil.wyszomierski@gmail.com"
   },
-  "summary": "Mocking library similar to \"Mockito\".",
+  "summary": "Mocking framework for unit tests which brings experience similar to \"Mockito\".",
   "source": {
     "git": "https://github.com/HLTech/Papuga.git",
     "tag": "0.1"
