@@ -72,6 +72,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F174CF321ED1D8F00ED47AA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AD93CF1821C8E30800679600 /* Info.plist */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		62A910687319C857A9EB03AA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -114,9 +122,9 @@
 		AD93CF1521C8E30800679600 /* iOSExampleTests */ = {
 			isa = PBXGroup;
 			children = (
-				AD93CF1821C8E30800679600 /* Info.plist */,
 				G_1972184805622 /* Generated */,
 				ADC22EB221C9075E00D76D0F /* MainTests */,
+				2F174CF321ED1D8F00ED47AA /* Supporting Files */,
 			);
 			path = iOSExampleTests;
 			sourceTree = "<group>";
@@ -331,15 +339,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-iOSExampleTests/Pods-iOSExampleTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Papuga/Papuga.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Papuga.framework",
 			);
@@ -621,7 +625,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U75TQ77U3H;
-				INFOPLIST_FILE = iOSExampleTests/Info.plist;
+				INFOPLIST_FILE = "iOSExampleTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -642,7 +646,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U75TQ77U3H;
-				INFOPLIST_FILE = iOSExampleTests/Info.plist;
+				INFOPLIST_FILE = "iOSExampleTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
