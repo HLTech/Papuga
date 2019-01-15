@@ -7,7 +7,16 @@ templates:
 output:
     path: ./iOSExampleTests/Generated
 args:
+    # Sets a list of imports in generated file.
     imports:
         - UIKit
+    # Sets a list of testable imports in generated file.
     testables:
         - iOSExample
+    # Defines which access level should be scanned.
+    # Available options:
+    #   - `all`,
+    #   - `publicOnly`
+    #
+    # If not set, `internal`, `public` and `open` types will be scanned.
+    # scanAccessLevel: publicOnly
