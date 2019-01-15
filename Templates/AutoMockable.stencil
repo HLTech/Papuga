@@ -66,13 +66,12 @@ import Papuga
         }
     ```
 #}
-{% for aType in types.protocols where aType.based.AutoMockable or aType|annotated:"AutoMockable" %}
+{% macro generatedMockClass type %}
+// MARK: - {% call classMockName type.name %}
 
-// MARK: - {% call classMockName aType.name %}
+class {% call classMockName type.name %}: Mock, Mockable, {{ type.name }} {
 
-class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
-
-    {% if aType.variables.count == 0 %}
+    {% if type.variables.count == 0 %}
     struct PropertySignature: Hashable, RawRepresentable {
 
         typealias RawValue = String
@@ -84,7 +83,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
         }
     {% else %}
     enum PropertySignature: String {
-        {% for aProperty in aType.variables %}
+        {% for aProperty in type.variables %}
         case {{ aProperty.name }}
         {% endfor %}
     {% endif %}
@@ -97,7 +96,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
         let name: PropertySignature
         let methodType: PropertyMethodType
         let parameter: Parameter<Any>
-        {% for aProperty in aType.variables %}
+        {% for aProperty in type.variables %}
 
         static func {{ aProperty.name }}(getter: Parameter<{{ aProperty.typeName }}>) -> PropertyMethod {
             return PropertyMethod(name: .{{ aProperty.name }}, methodType: .get, parameter: getter.converted())
@@ -116,7 +115,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
         typealias Name = PropertySignature
 
         let name: PropertySignature
-        {% for aProperty in aType.variables %}
+        {% for aProperty in type.variables %}
 
         static var {{ aProperty.name }}: Property<{{ aProperty.typeName }}> {
             return Property<{{ aProperty.typeName }}>(name: .{{ aProperty.name }})
@@ -125,7 +124,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
     }
 
     enum MethodSignature: String {
-    {% for aMethod in aType.methods %}
+    {% for aMethod in type.methods %}
         case {% call humanReadableMethodNameWithReturnTypeName aMethod %} = "{% call methodSignature aMethod %}"
     {% endfor %}
     }
@@ -136,7 +135,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
 
         let name: MethodSignature
         let parameters: [Parameter<Any>]
-    {% for aMethod in aType.methods %}
+    {% for aMethod in type.methods %}
 
         static func {% call methodStub aMethod %} -> Method {
             return Method(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %}, parameters: {% call methodConvertedParametersArray aMethod %})
@@ -149,7 +148,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
         typealias Name = MethodSignature
 
         let name: MethodSignature
-    {% for aMethod in aType.methods where not aMethod.returnTypeName.isVoid and not aMethod.throws %}
+    {% for aMethod in type.methods where not aMethod.returnTypeName.isVoid and not aMethod.throws %}
 
         static func {% call methodGenericStub aMethod %} -> ReturnMethod<{{ aMethod.returnTypeName }}> {
             return ReturnMethod<{{ aMethod.returnTypeName }}>(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %})
@@ -162,7 +161,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
         typealias Name = MethodSignature
 
         let name: MethodSignature
-    {% for aMethod in aType.methods where aMethod.rethrows %}
+    {% for aMethod in type.methods where aMethod.rethrows %}
 
         static func {% call methodGenericStub aMethod %} -> RethrowableMethod<{{ aMethod.returnTypeName }}> {
             return RethrowableMethod<{{ aMethod.returnTypeName }}>(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %})
@@ -175,7 +174,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
         typealias Name = MethodSignature
 
         let name: MethodSignature
-    {% for aMethod in aType.methods where aMethod.throws %}
+    {% for aMethod in type.methods where aMethod.throws %}
 
         static func {% call methodGenericStub aMethod %} -> ThrowableMethod<{{ aMethod.returnTypeName }}> {
             return ThrowableMethod<{{ aMethod.returnTypeName }}>(name: .{% call humanReadableMethodNameWithReturnTypeName aMethod %})
@@ -194,7 +193,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
     {#
         Iterate through protocol's properties.
     #}
-    {% for aProperty in aType.variables %}
+    {% for aProperty in type.variables %}
 
     var {{ aProperty.name }}: {{ aProperty.typeName }} {
         get {
@@ -234,7 +233,7 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
     {#
         Iterate through protocol's methods.
     #}
-    {% for aMethod in aType.methods %}
+    {% for aMethod in type.methods %}
 
     func {% call methodSignature aMethod %} {
         let method = Method.{% call methodStubInvocation aMethod %}
@@ -245,4 +244,17 @@ class {% call classMockName aType.name %}: Mock, Mockable, {{ aType.name }} {
     }
     {% endfor %}
 }
+{% endmacro %}
+
+{#
+    Iterate through protocols.
+#}
+{% for aType in types.protocols where aType.based.AutoMockable or aType|annotated:"AutoMockable" %}
+    {% if
+        argument.scanAccessLevel == "all" or
+        (argument.scanAccessLevel == "publicOnly" and (aType.accessLevel == "public" or aType.accessLevel == "open")) or
+        aType.accessLevel != "private"
+    %}
+        {% call generatedMockClass aType %}
+    {% endif %}
 {% endfor %}
