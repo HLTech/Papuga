@@ -3,7 +3,7 @@ os: osx
 osx_image: xcode10.1
 branches:
     only:
-        - master
+        - develop
 xcode_project: Papuga.xcodeproj
 xcode_scheme: Papuga
 xcode_destination: xcode_destination: platform=iOS Simulator,OS=12.1,name=iPhone X
