@@ -1,4 +1,8 @@
 ![Papuga](Images/papuga.png)
+[![Build Status](https://img.shields.io/travis/HLTech/Papuga.svg)](https://travis-ci.org/HLTech/Papuga)
+[![Pod Version](http://img.shields.io/cocoapods/v/Papuga.svg?style=flat)](http://cocoadocs.org/docsets/Papuga/)
+[![Pod Platform](https://img.shields.io/cocoapods/p/Papuga.svg)](http://cocoadocs.org/docsets/Papuga/)
+
 # Papuga
 Papuga (/papuɡa/) is a mocking framework for unit tests which brings experience similar to [Mockito](https://github.com/mockito/mockito) and [SwiftyMocky](https://github.com/MakeAWishFoundation/SwiftyMocky). Framework uses [Sourcery](https://github.com/krzysztofzablocki/Sourcery) which scans swift files and generates mock classes for you.
 
