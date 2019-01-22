@@ -1,20 +1,26 @@
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length
-// swiftlint:disable identifier_name
-// swiftlint:disable nesting
+//
 {#
     Created by Kamil Wyszomierski on 25/10/2018.
     Copyright © 2018 HL Tech. All rights reserved.
 
     This template is written in Stencil. For more info please visit: http://stencil.fuller.li/en/latest/
 #}
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable file_length
+// swiftlint:disable identifier_name
+// swiftlint:disable nesting
 
-import UIKit
 {#
-    Adds libraries `@testable import` specified under `testable` argument in `args` inside .yml config.
+    Adds imports specified under `imports` argument in `args` inside .yml config.
+#}
+{% for anImport in argument.imports %}
+import {{ anImport }}
+{% endfor %}
+{#
+    Adds libraries `@testable import` specified under `testables` argument in `args` inside .yml config.
 #}
 import Papuga
-{% for aTestable in argument.testable %}
+{% for aTestable in argument.testables %}
 @testable import {{ aTestable }}
 {% endfor %}
 {#
@@ -48,7 +54,7 @@ import Papuga
 {% macro humanReadableMethodName method %}{{ aMethod.shortName | replace:" ", "" | swiftIdentifier | lowerFirstWord }}{% for aParameter in aMethod.parameters %}{% if aParameter.argumentLabel %}{{ aParameter.argumentLabel|upperFirstLetter }}{% endif %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% endmacro %}
 {% macro humanReadableMethodNameWithReturnTypeName method %}{% call humanReadableMethodName method %}{% call humanReadableReturnTypeName method %}{% endmacro %}
 {#
-    Variables macros.
+    Class name.
 #}
 {% macro classMockName name %}{{ name }}Mock{% endmacro %}
 {#
@@ -60,8 +66,7 @@ import Papuga
         }
     ```
 #}
-{% for type in types.protocols where type.based.AutoMockable or type|annotated:"AutoMockable" %}
-
+{% macro generatedMockClass type %}
 // MARK: - {% call classMockName type.name %}
 
 class {% call classMockName type.name %}: Mock, Mockable, {{ type.name }} {
@@ -239,4 +244,17 @@ class {% call classMockName type.name %}: Mock, Mockable, {{ type.name }} {
     }
     {% endfor %}
 }
+{% endmacro %}
+
+{#
+    Iterate through protocols.
+#}
+{% for aType in types.protocols where aType.based.AutoMockable or aType|annotated:"AutoMockable" %}
+    {% if
+        argument.scanAccessLevel == "all" or
+        (argument.scanAccessLevel == "publicOnly" and (aType.accessLevel == "public" or aType.accessLevel == "open")) or
+        aType.accessLevel != "private"
+    %}
+        {% call generatedMockClass aType %}
+    {% endif %}
 {% endfor %}
