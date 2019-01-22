@@ -250,11 +250,13 @@ class {% call classMockName type.name %}: Mock, Mockable, {{ type.name }} {
     Iterate through protocols.
 #}
 {% for aType in types.protocols where aType.based.AutoMockable or aType|annotated:"AutoMockable" %}
-    {% if
-        argument.scanAccessLevel == "all" or
-        (argument.scanAccessLevel == "publicOnly" and (aType.accessLevel == "public" or aType.accessLevel == "open")) or
-        aType.accessLevel != "private"
-    %}
+    {% if argument.scanAccessLevel == "all" %}
+        {% call generatedMockClass aType %}
+    {% elif argument.scanAccessLevel == "publicOnly" and aType.accessLevel == "public" %}
+        {% call generatedMockClass aType %}
+    {% elif argument.scanAccessLevel == "publicOnly" and aType.accessLevel == "open" %}
+        {% call generatedMockClass aType %}
+    {% elif argument.scanAccessLevel != "publicOnly" and aType.accessLevel != "private" %}
         {% call generatedMockClass aType %}
     {% endif %}
 {% endfor %}
