@@ -2,7 +2,7 @@ Pod::Spec.new do |spec|
 
     # Root
     spec.name = 'Papuga'
-    spec.version = '0.2.1'
+    spec.version = '0.2.2'
     spec.license = { :type => 'MIT' }
     spec.homepage = 'https://github.com/HLTech/Papuga'
     spec.authors = { 'Kamil Wyszomierski' => 'kamil.wyszomierski@gmail.com' }
