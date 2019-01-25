@@ -49,7 +49,7 @@ import Papuga
 {#
     Type name convercy.
 #}
-{% macro clearTypeName type %}{{ type | replace:"_","" | replace:"=","" | replace:">","" | replace:":","" | replace:"?","" | replace:" ","" | swiftIdentifier }}{% endmacro %}
+{% macro clearTypeName type %}{{ type | replace:".","" | replace:"_","" | replace:"=","" | replace:">","" | replace:":","" | replace:"?","" | replace:" ","" | swiftIdentifier }}{% endmacro %}
 {% macro humanReadableTypeName type %}{% if type.isOptional %}Optional{% endif %}{% if type.isArray %}ArrayOf{% call humanReadableTypeName type.array.elementTypeName %}{% elif type.isClosure %}ClosureOf{% for aParameter in type.closure.parameters %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% call humanReadableReturnTypeName type.closure %}{% elif type.isDictionary %}DictionaryOf{% call humanReadableTypeName type.dictionary.keyTypeName %}KeyAnd{% call humanReadableTypeName type.dictionary.valueTypeName %}Value{% elif type.isGeneric %}Generic{% call clearTypeName type.generic.name %}Of{% for aParameter in type.generic.typeParameters %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% else %}{% call clearTypeName type %}{% endif %}{% endmacro %}
 {% macro humanReadableMethodName method %}{{ aMethod.shortName | replace:" ", "" | swiftIdentifier | lowerFirstWord }}{% for aParameter in aMethod.parameters %}{% if aParameter.argumentLabel %}{{ aParameter.argumentLabel|upperFirstLetter }}{% endif %}{% call humanReadableTypeName aParameter.typeName %}{% endfor %}{% endmacro %}
 {% macro humanReadableMethodNameWithReturnTypeName method %}{% call humanReadableMethodName method %}{% call humanReadableReturnTypeName method %}{% endmacro %}
