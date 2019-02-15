@@ -123,10 +123,22 @@ class {% call classMockName type.name %}: Mock, Mockable, {{ type.name }} {
         {% endfor %}
     }
 
+    {% if type.methods.count == 0 %}
+    struct MethodSignature: Hashable, RawRepresentable {
+
+        typealias RawValue = String
+
+        let rawValue: String
+
+        init?(rawValue: String) {
+            self.rawValue = rawValue
+        }
+    {% else %}
     enum MethodSignature: String {
-    {% for aMethod in type.methods %}
+        {% for aMethod in type.methods %}
         case {% call humanReadableMethodNameWithReturnTypeName aMethod %} = "{% call methodSignature aMethod %}"
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
     }
 
     struct Method: Nameable, ParametersProviding {
