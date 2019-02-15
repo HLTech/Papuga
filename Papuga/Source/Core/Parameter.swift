@@ -11,6 +11,7 @@ import Foundation
 public enum Parameter<Value>: Matchable {
     case any
     case match(Closure.ValueReturn<Value, Bool>)
+    /// This case should be used only in genereted files. Use `equal(to:)` method for equality check.
     case value(Value)
 
     public static func ~== (lhs: Parameter<Value>, rhs: Parameter<Value>) -> Bool {
@@ -53,14 +54,14 @@ public enum Parameter<Value>: Matchable {
 
 extension Parameter where Value: Equatable {
 
-    static func equal(to value: Value) -> Parameter<Value> {
+    public static func equal(to value: Value) -> Parameter<Value> {
         return .match { $0 == value }
     }
 }
 
 extension Parameter where Value == String {
 
-    static func anyString() -> Parameter<Value> {
+    public static func anyString() -> Parameter<Value> {
         return .any
     }
 }
