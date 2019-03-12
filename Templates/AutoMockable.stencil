@@ -43,7 +43,7 @@ import Papuga
 {% macro humanReadableClosureReturnTypeName closure %}{% if closure.throws %}Throws{% endif %}{% if not closure.returnTypeName.isVoid %}Returns{% call humanReadableTypeName closure.returnTypeName %}{% endif %}{% endmacro%}
 {% macro humanReadableMethodReturnTypeName method %}{% if method.rethrows %}Rethrows{% endif %}{% call humanReadableClosureReturnTypeName method %}{% endmacro%}
 {% macro methodGenericStub method %}{{ method.shortName }}({% for aParameter in method.parameters %}{% call methodParameterStub aParameter %}{% if not forloop.last %}, {% endif %}{% endfor %}){% endmacro %}
-{% macro methodReturnTypeName method %}{% if not method.returnTypeName.isVoid %} -> {{ method.returnTypeName }}{% endif %}{% endmacro%}
+{% macro methodReturnTypeName method %}{% if method.throws %} throws{% endif %}{% if not method.returnTypeName.isVoid %} -> {{ method.returnTypeName }}{% endif %}{% endmacro%}
 {% macro methodSignature method %}{{ method.name }}{% call methodReturnTypeName method %}{% endmacro %}
 {% macro methodStub method %}{{ method.shortName }}({% for aParameter in method.parameters %}{% call methodParameterStub aParameter %}{% if not forloop.last or not method.returnTypeName.isVoid %}, {% endif %}{% endfor %}{% if not method.returnTypeName.isVoid %}returns type: {{ method.returnTypeName }}.Type = {{ method.returnTypeName }}.self{% endif %}){% endmacro %}
 {% macro methodStubInvocation method %}{{ method.callName }}({% for aParameter in method.parameters %}{% if aParameter.argumentLabel %}{{ aParameter.argumentLabel }}: {% endif %}Parameter<{% call noEscapeParameterTypeName aParameter %}>.value({{ aParameter.name }}){% if not forloop.last or not method.returnTypeName.isVoid %}, {% endif %}{% endfor %}{% if not method.returnTypeName.isVoid %}returns: {{ method.returnTypeName }}.self{% endif %}){% endmacro %}
@@ -252,7 +252,13 @@ class {% call classMockName type.name %}: Mock, Mockable, {{ type.name }} {
         let method = Method.{% call methodStubInvocation aMethod %}
         registerCall(for: method)
         {% if not aMethod.returnTypeName.isVoid %}
+            {% if aMethod.throws %}
+        return try getThrowableReturnValue(for: method)
+            {% else %}
         return getMethodReturnValue(for: method)
+            {% endif %}
+        {% elif aMethod.throws %}
+        try throwMockedError(for: method)
         {% endif %}
     }
     {% endfor %}

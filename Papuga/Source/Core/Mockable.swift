@@ -137,6 +137,21 @@ extension Mockable where Self: Mock {
             registeredSetPropertyCalls[property.name]?.append(property)
         }
     }
+    
+    public func throwMockedError(for method: Method) throws {
+        guard methodReturnValues[method.name] is ThrowableStub<()> else {
+            let error = MockError.cannotGetStubbedReturnValue(methodSignature: method.name.rawValue)
+            failure(error.description, file: file, line: line)
+        }
+        
+        let stub = methodReturnValues[method.name] as! ThrowableStub<()>
+        switch stub {
+        case .error(let error):
+            throw error
+        case .value:
+            return
+        }
+    }
 
     private func verify(ifNumberOfCalls numberOfCalls: Int, `is` times: Times, rawSignature: String, file: StaticString, line: UInt) {
         let isMatchingTimes = times.comparison(numberOfCalls)
