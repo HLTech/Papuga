@@ -1,7 +1,7 @@
 PODS:
-  - Papuga (0.1):
+  - Papuga (0.2.5):
     - Sourcery
-  - Sourcery (0.15.0)
+  - Sourcery (0.16.0)
 
 DEPENDENCIES:
   - Papuga (from `../`)
@@ -16,8 +16,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Papuga: 5c723d56472ef1ad8b7b9c8c4e78ce530c2c0f60
-  Sourcery: 5895672cae353cdbfa95f3f4aaeb75a664d76f6a
+  Papuga: a29106621b12fc1d2985bf8bbf34e90d45142213
+  Sourcery: 3e55aad9719ee5782ab81eb16addd44d272e4d13
 
 PODFILE CHECKSUM: 76546183fa169e66a930b1445515252162feaf76
 
