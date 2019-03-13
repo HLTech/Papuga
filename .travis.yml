@@ -1,5 +1,11 @@
 language: objective-c
+podfile: ./Example/
 osx_image: xcode10.1
-xcode_project: Papuga.xcodeproj
-xcode_scheme: Papuga
-xcode_destination: platform=iOS Simulator,OS=12.1,name=iPhone X
+script:
+    - cd Example; pod update; cd ..
+
+    # Library tests
+    - set -o pipefail && xcodebuild -project Papuga.xcodeproj -scheme Papuga -destination 'platform=iOS Simulator,OS=12.1,name=iPhone X' build test | xcpretty
+
+    # Code generation and tests for "Example" workspace
+    - set -o pipefail && xcodebuild -workspace Example/iOSExample.xcworkspace -scheme iOSExample -destination 'platform=iOS Simulator,OS=12.1,name=iPhone X' build test -enableCodeCoverage YES | xcpretty

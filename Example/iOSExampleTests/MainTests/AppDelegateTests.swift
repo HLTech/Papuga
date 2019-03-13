@@ -36,7 +36,6 @@ class AppDelegateTests: XCTestCase {
         _ = sut.application(UIApplication.shared, didFinishLaunchingWithOptions: nil)
 
         // Then
-        Parameter<Int>.value(1)
         viewRoutingMock.verify(method: .showHomeScene(), whichNumberOfCallsIs: 1)
     }
 }
