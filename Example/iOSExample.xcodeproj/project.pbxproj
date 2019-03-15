@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2CEADEEE54B98C99BC920181 /* Pods_iOSExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D479BD3E95CBE4A417C7623C /* Pods_iOSExampleTests.framework */; };
 		6141DE691F4125951AE6A99C /* Pods_iOSExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B0B1C7578D2E6BCB185D6DC /* Pods_iOSExample.framework */; };
+		AD81DE6E22319BDB00507B2E /* ViewRoutingMockk.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81DE6D22319BDB00507B2E /* ViewRoutingMockk.swift */; };
 		AD93CF0221C8E30700679600 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD93CF0121C8E30700679600 /* AppDelegate.swift */; };
 		AD93CF0C21C8E30800679600 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD93CF0A21C8E30800679600 /* LaunchScreen.storyboard */; };
 		ADC22EAC21C9062400D76D0F /* ViewRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC22EAA21C9062300D76D0F /* ViewRouting.swift */; };
@@ -35,6 +36,7 @@
 		544F1D6BEF5E72E6811C7E6A /* Pods-iOSExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOSExample/Pods-iOSExample.release.xcconfig"; sourceTree = "<group>"; };
 		8B0B1C7578D2E6BCB185D6DC /* Pods_iOSExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA59CBA61D14C28E39375D2C /* Pods-iOSExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOSExample/Pods-iOSExample.debug.xcconfig"; sourceTree = "<group>"; };
+		AD81DE6D22319BDB00507B2E /* ViewRoutingMockk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRoutingMockk.swift; sourceTree = "<group>"; };
 		AD93CEFE21C8E30700679600 /* iOSExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD93CF0121C8E30700679600 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AD93CF0B21C8E30800679600 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				ADC22EB321C9075E00D76D0F /* AppDelegateTests.swift */,
+				AD81DE6D22319BDB00507B2E /* ViewRoutingMockk.swift */,
 			);
 			path = MainTests;
 			sourceTree = "<group>";
@@ -437,6 +440,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD81DE6E22319BDB00507B2E /* ViewRoutingMockk.swift in Sources */,
 				ADC22EB421C9075E00D76D0F /* AppDelegateTests.swift in Sources */,
 				BF_767895860856 /* AutoMockable.generated.swift in Sources */,
 			);

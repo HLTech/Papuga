@@ -24,4 +24,16 @@ class ViewRouter: ViewRouting {
         window.rootViewController = HomeViewController()
         window.makeKeyAndVisible()
     }
+
+    func showLoginScene(completion: @escaping () -> Void) {
+        
+    }
+
+    func showLogoutScene(completion: @escaping EmptyClosure) {
+        
+    }
+
+    func showUnauthorizedUserScene(success: @escaping EmptyClosure, failure: @escaping ValueClosure<Error>) {
+        
+    }
 }

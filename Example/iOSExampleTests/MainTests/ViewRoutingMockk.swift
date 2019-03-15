@@ -1,19 +1,15 @@
-// Generated using Sourcery 0.15.0 — https://github.com/krzysztofzablocki/Sourcery
-// DO NOT EDIT
-
 //
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length
-// swiftlint:disable identifier_name
-// swiftlint:disable nesting
+//  ViewRoutingMockk.swift
+//  iOSExampleTests
+//
+//  Created by Kamil Wyszomierski on 07/03/2019.
+//  Copyright © 2019 HL Tech. All rights reserved.
+//
 
-import UIKit
 import Papuga
 @testable import iOSExample
 
-// MARK: - ViewRoutingMock
-
-class ViewRoutingMock: Mock, Mockable, ViewRouting {
+class ViewRoutingMockk: Mock, Mockable, ViewRouting {
 
     enum PropertySignature: String {
         case window
@@ -95,6 +91,40 @@ class ViewRoutingMock: Mock, Mockable, ViewRouting {
         let name: MethodSignature
     }
 
+    struct ClosureParameter<T> {
+
+        static func completion() -> ClosureParameter<EmptyClosure> {
+            return ClosureParameter<EmptyClosure>()
+        }
+
+        static func success() -> ClosureParameter<EmptyClosure> {
+            return ClosureParameter<EmptyClosure>()
+        }
+
+        static func failure(_ value: Parameter<Error>) -> ClosureParameter<ValueClosure<Error>> {
+            return ClosureParameter<ValueClosure<Error>>()
+        }
+    }
+
+    struct ClosureMethod<T>: Nameable {
+
+        typealias Name = MethodSignature
+
+        let name: MethodSignature
+
+        static func showLoginScene(_ completion: ClosureParameter<() -> Void>) -> ClosureMethod<() -> Void> {
+            return ClosureMethod<() -> Void>(name: .showLogoutSceneCompletionClosureOf)
+        }
+
+        static func showLogoutScene(_ completion: ClosureParameter<EmptyClosure>) -> ClosureMethod<EmptyClosure> {
+            return ClosureMethod<EmptyClosure>(name: .showLogoutSceneCompletionClosureOf)
+        }
+
+        static func showUnauthorizedUserScene(_ success: ClosureParameter<EmptyClosure>, _ failure: ClosureParameter<ValueClosure<Error>>) -> ClosureMethod<EmptyClosure> {
+            return Method(name: .showUnauthorizedUserSceneSuccessClosureOfFailureClosureOf_T_ValueT_ReturnsGenericVoidOfError, parameters: [success.converted(), failure.converted()])
+        }
+    }
+
     var methodReturnValues: [MethodSignature: Any] = [:]
     var registeredMethodCalls: [MethodSignature: [Method]] = [:]
     var propertyReturnValues: [PropertySignature: Any] = [:]
@@ -109,6 +139,10 @@ class ViewRoutingMock: Mock, Mockable, ViewRouting {
             registerCall(for: property)
             return value
         }
+    }
+
+    func given<ClosureValue>(closure: ClosureValue, forClosureIn method: ClosureMethod<ClosureValue>) {
+
     }
 
     func given<ReturnValue>(value: ReturnValue, for property: Property<ReturnValue>) {
@@ -139,11 +173,6 @@ class ViewRoutingMock: Mock, Mockable, ViewRouting {
 
     func showLogoutScene(completion: @escaping EmptyClosure) {
         let method = Method.showLogoutScene(completion: Parameter<EmptyClosure>.value(completion))
-        registerCall(for: method)
-    }
-
-    func showUnauthorizedUserScene(success: @escaping EmptyClosure, failure: @escaping ValueClosure<Error>) {
-        let method = Method.showUnauthorizedUserScene(success: Parameter<EmptyClosure>.value(success), failure: Parameter<ValueClosure<Error>>.value(failure))
         registerCall(for: method)
     }
 }
